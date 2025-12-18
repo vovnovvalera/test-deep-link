@@ -39,20 +39,41 @@
 </script> -->
 <script>
 window.onload = function() {
-    // Ваша ссылка
-    var deepLink = 'https://noom.sng.link/Ernae/bsdr?_dl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1&_ddl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1';
+    // 1. Ваша универсальная ссылка (Singular)
+    var singularLink = 'https://noom.sng.link/Ernae/bsdr?_dl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1&_ddl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1';
+    
+    // 2. Определяем, Android это или iOS
+    var uA = navigator.userAgent || navigator.vendor || window.opera;
+    var isAndroid = /android/i.test(uA);
+    var isIOS = /iPad|iPhone|iPod/.test(uA) && !window.MSStream;
 
-    // 1. Запускаем переход
-    window.location.href = deepLink;
-
-    // 2. ЗАМОРАЖИВАЕМ браузер через 500-1000мс
-    // Это не даст ему уйти на страницу Google Play Web, 
-    // но системный диалог "Открыть в приложении" уже успеет появиться и останется на экране.
-    setTimeout(function() {
-        window.stop(); 
-    }, 1000); // Попробуйте значения: 500, 800, 1000.
-    // Если 1000 слишком долго (успевает открыться Play Store) — ставьте меньше.
-    // Если 500 слишком быстро (диалог не успевает появиться) — ставьте больше.
+    // 3. Логика для ANDROID (Samsung Internet, Chrome и т.д.)
+    if (isAndroid) {
+        // ID приложения Noom
+        var packageId = 'com.noom.walk';
+        
+        // Убираем https:// из начала ссылки для формирования пути
+        var linkPath = singularLink.replace(/^https?:\/\//, '');
+        
+        // Формируем Intent
+        // Самое важное здесь: S.browser_fallback_url
+        // Если приложения НЕТ, Android сам откроет этот URL.
+        // Мы ставим туда вашу ссылку Singular, чтобы она увела в Play Store.
+        var intentUrl = 'intent://' + linkPath + 
+                        '#Intent;' + 
+                        'scheme=https;' + 
+                        'package=' + packageId + ';' + 
+                        'S.browser_fallback_url=' + encodeURIComponent(singularLink) + ';' + 
+                        'end';
+        
+        window.location.href = intentUrl;
+    }
+    
+    // 4. Логика для iOS (iPhone) и остальных
+    else {
+        // iOS хорошо работает с прямыми Universal Links
+        window.location.href = singularLink;
+    }
 };
 </script>
 </body>
