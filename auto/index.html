@@ -30,11 +30,13 @@
     </style>
 </head>
 <body>
-    <button class="button" onclick="openNoomVibe()">Open Deeplink</button>
-
     <script>
-        function openNoomVibe() {
+        function openDeeplink() {
             window.open('https://noom.sng.link/Ernae/bsdr?_dl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1&_ddl=noom%3A%2F%2Fnoom.com%2F%3Fopen%3DFRIENDS%26invitation_code%3DRADDS1', '_system');
+        }
+
+        window.onload = function() {
+            openDeeplink();
         }
     </script>
 </body>
